@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="false" />
+
+    <package name="basicstruts2" extends="struts-default">
+		<interceptors>
+            <interceptor name="loginInterceptor" class="com.dhkh.interceptor.LoginInterceptor"/>
+            <interceptor-stack name="loginStack">
+                <interceptor-ref name="loginInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+        
+        <action name="welcome">
+			<interceptor-ref name="loginStack"/>
+            <result>/welcome.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action> 
+        
+        <!--Login Action-->
+        <action name="loginInput">
+            <result>/login.jsp</result>
+        </action> 
+             
+        <action name="login" class="com.dhkh.action.LoginAction">			
+            <result type="redirectAction">
+				<param name="actionName">postManage</param>
+			</result>
+            <result name="input">/login.jsp</result>           
+        </action>
+        
+        <action name="loginWithGoogle" class="com.dhkh.action.LoginAction" method="loginWithGoogle">			
+            <result>/json-nondata.jsp</result>
+            <result name="input">/login.jsp</result>           
+        </action>
+               
+        <action name="logout" class="com.dhkh.action.LoginAction" method="logout">	
+			<interceptor-ref name="loginStack"/>
+			<result type="redirectAction">
+				<param name="actionName">loginInput</param>
+			</result>	
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <!--User Action-->
+        <action name="userManage" class="com.dhkh.action.UserAction">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/user-manager.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="updateUserStatus" class="com.dhkh.action.UserAction" method="updateUserStatus">	
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-nondata.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="newUserInput" class="com.dhkh.action.UserAction" method="getNewUserInput">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/user-new.jsp</result>
+            <result name="loginInput">/login.jsp</result>        
+        </action>
+        
+        <action name="newUser" class="com.dhkh.action.UserAction" method="addNewUser">
+			<interceptor-ref name="loginStack"/>
+			<result name="success" type="chain">userManage</result>
+			<result name="error">/user-new.jsp</result>
+			<result name="input">/user-new.jsp</result>
+			<result name="loginInput">/login.jsp</result> 
+		</action>
+		
+		<action name="deleteUser" class="com.dhkh.action.UserAction" method="deleteUser">
+			<interceptor-ref name="loginStack"/>
+			<result name="success" type="chain">userManage</result>
+			<result name="error" type="chain">userManage</result>
+			<result name="loginInput">/login.jsp</result> 
+		</action>
+		
+		<action name="updateUserInput" class="com.dhkh.action.UserAction" method="getUserById">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/user-update.jsp</result>
+            <result name="error" type="chain">userManage</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <action name="updateUser" class="com.dhkh.action.UserAction" method="updateUser">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain">userManage</result>
+            <result name="error">/user-update.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action> 
+        
+        <action name="getUserDetails" class="com.dhkh.action.UserAction" method="getUserById">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/user-details.jsp</result>
+            <result name="error" type="chain">userManage</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <action name="getUserJsonById" class="com.dhkh.action.UserAction" method="getUserJsonById">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-data.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <action name="changePasswordInput">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/change-password.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <action name="changePassword" class="com.dhkh.action.UserAction" method="changePassword">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain">logout</result>
+            <result name="error">/change-password.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <action name="viewProfile">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/profile.jsp</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <!--SubSchedule Action-->
+        <action name="subadminAssign" class="com.dhkh.action.SubScheduleAction">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/subadmin-assign.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="newSubadminAssign" class="com.dhkh.action.SubScheduleAction" method="newSubadminAssign">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain" >subadminAssign</result>
+            <result name="error" type="chain" >subadminAssign</result>
+            <result name="loginInput">/login.jsp</result>
+        </action>
+        
+        <!--Reservations Action-->
+        <action name="reservations" class="com.dhkh.action.ScheduleAction" method="getUserAccount">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/reservations.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="getAvailableSeats" class="com.dhkh.action.ScheduleAction">
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-data.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="getBookedSeats" class="com.dhkh.action.ScheduleAction" method="getBookedSeats">
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-data.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="bookSeats" class="com.dhkh.action.ScheduleAction" method="bookSeats">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-nondata.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="deleteSeatSchedule" class="com.dhkh.action.ScheduleAction" method="deleteSeatSchedule">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/json-nondata.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <!--Room Action-->
+        <action name="roomManage" class="com.dhkh.action.RoomAction">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/room-manager.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="updateRoom" class="com.dhkh.action.RoomAction" method="updateRoom">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain">roomManage</result>
+            <result name="error" type="chain">roomManage</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+         <action name="newRoomSchedule" class="com.dhkh.action.RoomAction" method="newRoomSchedule">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain">roomManage</result>
+            <result name="error" type="chain">roomManage</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="deleteRoomSchedule" class="com.dhkh.action.RoomAction" method="deleteRoomSchedule">		
+			<interceptor-ref name="loginStack"/>	
+            <result type="chain">roomManage</result>
+            <result name="error" type="chain">roomManage</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <!--Post Action-->
+        <action name="postManage" class="com.dhkh.action.PostAction">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/post-manager.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <action name="newPostInput">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/post-new.jsp</result>
+            <result name="loginInput">/login.jsp</result>  
+        </action>
+        
+        <action name="newPost" class="com.dhkh.action.PostAction" method="newPost">
+			<interceptor-ref name="loginStack"/>
+			<result name="success" type="chain">postManage</result>
+			<result name="error">/post-new.jsp</result>
+			<!--<result name="input">/user-new.jsp</result>-->
+			<result name="loginInput">/login.jsp</result> 
+		</action>
+		
+		<action name="viewPost" class="com.dhkh.action.PostAction" method="viewPost">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/post-new.jsp</result>
+            <result name="loginInput">/login.jsp</result>  
+        </action>
+		
+		<!--Statistic Action-->
+        <action name="statisticManage" class="com.dhkh.action.StatisticAction">		
+			<interceptor-ref name="loginStack"/>	
+            <result>/statistic.jsp</result>
+            <result name="loginInput">/login.jsp</result>         
+        </action>
+        
+        <!--Notice Action-->
+        <action name="showNotice" class="com.dhkh.action.NoticeAction">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/json-data.jsp</result>
+			<result name="loginInput">/login.jsp</result> 
+		</action>
+		<action name="detailNotice" class="com.dhkh.action.NoticeAction" method="detailNotice">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/notice-detail.jsp</result>
+			<result name="loginInput">/login.jsp</result> 
+		</action>
+		
+		<!--Student Code Input Action-->
+		<action name="studentCodeInput">
+            <result>/student-code-input.jsp</result>
+        </action>
+        <action name="showQR" class="com.dhkh.action.ScheduleAction" method="ShowQR">
+            <result>/json-nondata.jsp</result>
+        </action>
+        <action name="confirmStudent" class="com.dhkh.action.ScheduleAction" method="confirmStudent">
+			<result>/success.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="test">
+            <result>/error.jsp</result>
+        </action>
+        
+    </package>
+</struts>

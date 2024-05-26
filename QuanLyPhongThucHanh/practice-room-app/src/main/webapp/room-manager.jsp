@@ -1,0 +1,288 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta
+		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+		name="viewport">
+	<title>LabTracker</title>
+	
+	<%@ include file="components/template-links.jsp" %>
+</head>
+
+<body class="theme-indigo">
+	<!-- Page Loader -->
+	<%@ include file="components/page-loader.jsp" %>
+	<!-- #END# Page Loader -->
+
+	<!-- Top Bar -->
+	<%@ include file="components/top-bar.jsp" %>
+	<!-- #Top Bar -->
+
+	<section>
+		<!-- Left Sidebar -->
+		<%@ include file="components/side-bar.jsp" %>
+		<!-- #END# Left Sidebar -->
+	</section>
+
+	<section class="content">
+		<div class="container-fluid">
+			<div class="block-header">
+				<h2>QUẢN LÝ PHÒNG</h2>
+			</div>
+			<!-- Content -->
+			<div class="row clearfix">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card">
+						<!-- Header -->
+						<div class="header">
+							<h2>QUẢN LÝ PHÒNG</h2>							
+						</div>
+						<!-- #END# Header -->
+						<!-- Body -->
+						<div class="body">
+							<s:if test="hasActionErrors()">
+			            		<div class="errors">
+			            			<s:actionerror />
+			            		</div>
+			            	</s:if>
+			            	
+			            	<div class="row clearfix header">
+			            		<h2>TRẠNG THÁI PHÒNG</h2>
+			            	</div>
+			            	<div class="row clearfix">
+			            		<div class="col-sm-3">
+			            			<label>Phòng</label>
+									<div class="form-group">
+										<div class="form-line">
+											<p>${room.roomName }</p>
+										</div>
+									</div>
+			            		</div>
+			            		<div class="col-sm-3">
+			            			<label>Ngày</label>
+									<div class="form-group">
+										<div class="form-line">
+											<p id="currentDate"></p>
+										</div>
+									</div>
+			            		</div>
+			            		<div class="col-sm-3">
+			            			<label>Trạng thái</label>
+									<div class="form-group">
+										<div class="form-line">
+											<p>${room.status }</p>
+										</div>
+									</div>
+			            		</div>
+			            		<%
+					            if (loggedInUser != null) {
+					                String role = loggedInUser.getRole();
+					                if (!Constant.ROLE_USER.equals(role)) {
+					            %>
+								<div class="col-sm-3" style="text-align: center">
+									<div class="button-demo js-modal-buttons">
+										<button type="button" data-color="indigo" id="btnNewRoomSchedule"
+											class="btn bg-indigo waves-effect button-demo js-modal-buttons">Thêm lịch đóng cửa</button>
+									</div>
+								</div>
+								<%
+					            	}
+					            }
+								%>
+							</div>
+							
+							<!-- Modal thêm lịch đóng cửa-->
+							<div class="modal fade" id="mdModal" tabindex="-1" role="dialog">
+								<div class="modal-dialog" role="document">
+									<form action="newRoomSchedule" method="post" id="updateRoomForm">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 class="modal-title" id="defaultModalLabel">Thêm lịch đóng cửa</h4>
+											</div>
+											<div class="modal-body">
+												<div class="row clearfix">
+													<input type="hidden" name="room.roomId" value="${room.roomId}"/>
+													<div class="col-sm-6">
+														<label for="role">Phòng</label>
+					                                    <div class="form-group">
+					                                        <select class="form-control show-tick" id="room" data-live-search="true" name="room.roomName">
+						                                        <option value="">-- Chọn phòng --</option>
+						                                        <option value="Lab - Doanh nghiệp" selected>Lab - Doanh nghiệp</option>
+					                                    	</select>
+					                                    </div>
+					                                </div>
+					                                <div class="col-sm-6">
+														<label for="birthdate">Trạng thái</label>
+					                                    <div class="form-group">
+					                                        <div class="form-group">
+																<select class="form-control show-tick" id="status" data-live-search="true" name="room.status">
+																	<option value="">-- Chọn trạng thái --</option>
+																	<option value="Đang hoạt động">Đang hoạt động</option>
+																	<option value="Đóng cửa" selected>Đóng cửa</option>
+																</select>
+															</div>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                            <div class="row clearfix">
+					                                <div class="col-sm-6">
+														<label>Ngày bắt đầu</label>
+							                            <div class="form-group">
+							                            	<div class="form-line" id="bs_datepicker_container">
+																<input type="text" class="form-control" id="startDate"
+																	name="room.startDateStr" data-date-format="dd/mm/yyyy"
+																	value="<s:property value='room.startDateStr' />"
+																	placeholder="Chọn ngày bắt đầu...">
+															</div>
+							                             </div>
+							                        </div>
+							                        <div class="col-sm-6">
+														<label>Buổi bắt đầu</label>
+					                                    <div class="form-group">
+					                                        <div class="form-group">
+																<select class="form-control show-tick" id="startPeriod" data-live-search="true" name="room.startPeriod">
+																	<option value="">-- Chọn buổi --</option>
+																	<option value="Sáng">Sáng</option>
+																	<option value="Chiều">Chiều</option>
+																</select>
+															</div>
+					                                    </div>
+					                                </div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-6">
+														<label>Ngày kết thúc</label>
+							                            <div class="form-group">
+							                            	<div class="form-line" id="bs_datepicker_container">
+																<input type="text" class="form-control" id="endDate"
+																	name="room.endDateStr" data-date-format="dd/mm/yyyy"
+																	value="<s:property value='room.endDateStr' />"
+																	placeholder="Chọn ngày kết thúc...">
+															</div>
+							                             </div>
+							                        </div>
+					                                <div class="col-sm-6">
+														<label>Buổi kết thúc</label>
+					                                    <div class="form-group">
+					                                        <div class="form-group">
+																<select class="form-control show-tick" id="endPeriod" data-live-search="true" name="room.endPeriod">
+																	<option value="">-- Chọn buổi --</option>
+																	<option value="Sáng">Sáng</option>
+																	<option value="Chiều">Chiều</option>
+																</select>
+															</div>
+					                                    </div>
+					                                </div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-12">
+														<label>Lý do đóng cửa</label>
+					                                    <div class="form-group">
+					                                        <div class="form-line">
+					                                            <input type="text" class="form-control" id="reason" name="room.reason" 
+					                                            	value="<s:property value='room.reason' />" maxlength="200" 
+					                                            	placeholder="Nhập lý do đóng cửa..."/>
+					                                        </div>
+					                                    </div>
+													</div>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="submit" id="btnSubmit" class="btn btn-link waves-effect">Xác nhận</button>
+												<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Đóng</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- #END# Model thêm lịch đóng cửa -->
+			            	
+							<div class="row clearfix header">
+			            		<h2>LỊCH ĐÓNG CỬA</h2>
+			            	</div>
+							<!-- Table -->
+							<div class="table-responsive">
+								<table
+									class="table table-bordered table-striped table-hover js-basic-example dataTable">
+									<thead>
+										<tr>
+											<th>Phòng</th>
+											<th>Trạng thái</th>
+											<th>Ngày bắt đầu</th>
+											<th>Buổi bắt đầu</th>
+											<th>Ngày kết thúc</th>
+											<th>Buổi kết thúc</th>
+											<th>Lý do</th>
+											<%
+								            if (loggedInUser != null) {
+								                String role = loggedInUser.getRole();
+								                if (!Constant.ROLE_USER.equals(role)) {
+								            %>
+											<th></th>
+											<%
+								            	}
+								            }
+											%>
+										</tr>
+									</thead>
+									<tbody>
+										<s:iterator value="rooms" var="room" status="counter">
+											<tr>
+												<td><s:property value="#room.roomName" /></td>
+												<td><s:property value="#room.status" /></td>
+												<td><s:property value="#room.startDate" /></td>
+												<td><s:property value="#room.startPeriod" /></td>
+												<td><s:property value="#room.endDate" /></td>
+												<td><s:property value="#room.endPeriod" /></td>
+												<td><s:property value="#room.reason" /></td>
+												<%
+												if (loggedInUser != null) {
+									                String role = loggedInUser.getRole();
+									                if (!Constant.ROLE_USER.equals(role)) {
+								            	%>
+												<td style="text-align: center;">
+													<button type="button" id="btnDeleteRoomSchedule"
+														onclick="deleteRoomSchedule(<s:property value="#room.roomId" />)"
+														class="btn bg-indigo waves-effect">
+														<i class="material-icons">delete</i>
+													</button>
+												</td>
+												<%
+									            	}
+									            }
+												%>
+											</tr>
+										</s:iterator>
+									</tbody>
+								</table>
+							</div>
+							<!-- #END# Table -->
+						</div>
+						<!-- #END# Body -->
+					</div>
+				</div>
+			</div>
+			<!-- #END# Content -->
+		</div>
+	</section>
+
+	<%@ include file="components/template-scripts.jsp" %>
+	
+	<!-- Script check valid updateRoomForm -->
+	<script type="text/javascript" charset="UTF-8" src="shared/js/roomManage/validUpdateRoom.js"></script>
+	
+	<script>
+		function deleteRoomSchedule(roomId) {
+			if (confirm("Bạn có chắc chắn muốn xóa lịch đóng cửa này?")) {
+				window.location.href = "<s:url action='deleteRoomSchedule'/>?roomId=" + roomId;
+			}
+		}
+	</script>
+
+</body>
+
+</html>
