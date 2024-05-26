@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 	// Initialize Firebase (giữ nguyên cấu hình)
 	var config = {
-		apiKey: "AIzaSyA2KBixW85XeQVpZ0zbd97oa4Vm4zSPyww",
+		apiKey: "",
 		authDomain: "labtracker-6d5b8.firebaseapp.com",
 		projectId: "labtracker-6d5b8",
 		storageBucket: "labtracker-6d5b8.appspot.com",

@@ -21,8 +21,8 @@ import com.dhkh.model.Schedule;
 public class MailSender {
     public static void sendMail(String recipientEmail, String subject, String body) {
         // Cấu hình thông tin tài khoản email
-        String senderEmail = "labtracker2024@gmail.com";
-        String senderPassword = "ortcbnzsumtuaohy";
+        String senderEmail = "";
+        String senderPassword = "";
 
         // Cấu hình properties cho mail session
         Properties props = new Properties();
